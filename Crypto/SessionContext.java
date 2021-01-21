@@ -462,6 +462,7 @@ class SessionContext {
             this.session.logout();
             this.session.closeSession();
             this.pkcs11Module_.finalize((Object)null);
+            this.pkcs11 = false;
             JOptionPane.showMessageDialog((Component)null, ResourceBundle.getBundle("UI/Bundle").getString("CKR_ValidCertificateNotFound"), ResourceBundle.getBundle("UI/Bundle").getString("ERROR"), 0);
             _log.error(ResourceBundle.getBundle("UI/Bundle").getString("CKR_ValidCertificateNotFound"));
             result.setIsLogged(false);
@@ -683,6 +684,7 @@ class SessionContext {
             this.pkcs11Module_.finalize((Object)null);
          } catch (Exception var4) {
          }
+         this.pkcs11 = false;
       } else if (this.loggedIn) {
          this.loggedIn = false;
       }
