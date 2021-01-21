@@ -1,0 +1,71 @@
+package iaik.pkcs.pkcs11.wrapper;
+
+public class CK_SKIPJACK_RELAYX_PARAMS {
+   public byte[] pOldWrappedX;
+   public byte[] pOldPassword;
+   public byte[] pOldPublicData;
+   public byte[] pOldRandomA;
+   public byte[] pNewPassword;
+   public byte[] pNewPublicData;
+   public byte[] pNewRandomA;
+
+   public String toString() {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("  ");
+      buffer.append("ulOldWrappedXLen: ");
+      buffer.append(this.pOldWrappedX.length);
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("pOldWrappedX: ");
+      buffer.append(Functions.toHexString(this.pOldWrappedX));
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("ulOldPasswordLen: ");
+      buffer.append(this.pOldPassword.length);
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("pOldPassword: ");
+      buffer.append(Functions.toHexString(this.pOldPassword));
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("ulOldPublicDataLen: ");
+      buffer.append(this.pOldPublicData.length);
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("pOldPublicData: ");
+      buffer.append(Functions.toHexString(this.pOldPublicData));
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("ulOldRandomLen: ");
+      buffer.append(this.pOldRandomA.length);
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("pOldRandomA: ");
+      buffer.append(Functions.toHexString(this.pOldRandomA));
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("ulNewPasswordLen: ");
+      buffer.append(this.pNewPassword.length);
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("pNewPassword: ");
+      buffer.append(Functions.toHexString(this.pNewPassword));
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("ulNewPublicDataLen: ");
+      buffer.append(this.pNewPublicData.length);
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("pNewPublicData: ");
+      buffer.append(Functions.toHexString(this.pNewPublicData));
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("ulNewRandomLen: ");
+      buffer.append(this.pNewRandomA.length);
+      buffer.append(Constants.NEWLINE);
+      buffer.append("  ");
+      buffer.append("pNewRandomA: ");
+      buffer.append(Functions.toHexString(this.pNewRandomA));
+      return buffer.toString();
+   }
+}
