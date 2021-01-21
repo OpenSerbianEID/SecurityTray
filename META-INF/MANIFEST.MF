@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.9.1
+Created-By: 1.8.0_121-b13 (Oracle Corporation)
+Class-Path: lib/CGSecurity.jar lib/javax.servlet-3.0.0.v201112011016.j
+ ar lib/jetty-http-9.3.3.v20150827.jar lib/jetty-io-9.3.3.v20150827.ja
+ r lib/jetty-server-9.3.3.v20150827.jar lib/jetty-util-9.3.3.v20150827
+ .jar lib/logback-classic-1.1.7.jar lib/logback-core-1.1.7.jar lib/slf
+ 4j-api-1.7.21.jar
+X-COMMENT: Main-Class will be added automatically by build
+Main-Class: saga.tray.SecurityTray
+
