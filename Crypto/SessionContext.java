@@ -140,7 +140,6 @@ class SessionContext {
 
       isIDCard = false;
       isCD = false;
-      String programFiles = System.getenv("programfiles");
       Boolean isCard = true;
       this._odabraniCitacIndex = OdabraniCitacIndex;
       TerminalFactory tf = TerminalFactory.getDefault();
@@ -188,32 +187,48 @@ class SessionContext {
       boolean oldPKS_or_MUP = false;
 
       try {
-         if (os.indexOf("win") >= 0) {
-            if (this.cardATR.equalsIgnoreCase("3bb918008131fe9e8073ff614083000000df")) {
-               crlURLAddress = "http://ca.mup.gov.rs/MUPCAGradjani.crl";
-               isIDCard = true;
-               this.loginType = "IDCard";
+         if (this.cardATR.equalsIgnoreCase("3bb918008131fe9e8073ff614083000000df")) {
+            //rsidp - Stara Licna Karta
+            crlURLAddress = "http://ca.mup.gov.rs/MUPCAGradjani.crl";
+            isIDCard = true;
+            this.loginType = "IDCard";
+            oldPKS_or_MUP = true;
+            if (os.contains("win")) {
+               String programFiles = System.getenv("programfiles");
                if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("64")) {
                   if (!(new File(programFiles + "\\MUP RS\\Republic of Serbia ID Card Middleware\\rsidp11_x64.dll")).exists()) {
                      moduleName = programFiles.substring(0, programFiles.length() - 6) + "\\MUP RS\\Republic of Serbia ID Card Middleware\\rsidp11_x64.dll";
                   } else {
                      moduleName = programFiles + "\\MUP RS\\Republic of Serbia ID Card Middleware\\rsidp11_x64.dll";
                   }
-
-                  oldPKS_or_MUP = true;
                } else if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("32")) {
                   if (!(new File(programFiles + "\\MUP RS\\Republic of Serbia ID Card Middleware\\rsidp11_x86.dll")).exists()) {
                      moduleName = programFiles.substring(0, programFiles.length() - 6) + "\\MUP RS\\Republic of Serbia ID Card Middleware\\rsidp11_x86.dll";
                   } else {
                      moduleName = programFiles + "\\MUP RS\\Republic of Serbia ID Card Middleware\\rsidp11_x86.dll";
                   }
-
-                  oldPKS_or_MUP = true;
                }
-            } else if (this.cardATR.equalsIgnoreCase("3bff9400008131804380318065b0850201f3120fff82900079")) {
-               crlURLAddress = "http://ca.mup.gov.rs/MUPCAGradjani.crl";
-               isIDCard = true;
-               this.loginType = "IDCard";
+            }
+         } else if (this.cardATR.equalsIgnoreCase("3B7D94000080318065B0831100C883009000") ||
+                 this.cardATR.equalsIgnoreCase("3b7d94000080318065b08311c0a983009000") ||
+                 this.cardATR.equalsIgnoreCase("3BF81300008131FE454A434F5076323431B7") ||
+                 this.cardATR.equalsIgnoreCase("3BE900008131FE454A434F503231563232A1") ||
+                 this.cardATR.equalsIgnoreCase("3BEA00008131FE454A33413038305632343180")) {
+            //nstsignpkcs11 - Stara PKS ili LK
+            this.loginType = "Certificate";
+            oldPKS_or_MUP = true;
+            if (os.contains("win")) {
+               String programFiles = System.getenv("programfiles");
+               String nstsPkg = "\\NetSeT\\nstsignpkcs11.dll";
+               moduleName = String.format("%s%s", programFiles, nstsPkg);
+            }
+         } else if (this.cardATR.equalsIgnoreCase("3bff9400008131804380318065b0850201f3120fff82900079")) {
+            //TrustEdgeID - Nova Licna Karta
+            crlURLAddress = "http://ca.mup.gov.rs/MUPCAGradjani.crl";
+            isIDCard = true;
+            this.loginType = "IDCard";
+            if (os.contains("win")) {
+               String programFiles = System.getenv("programfiles");
                if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("64")) {
                   if ((new File(programFiles + "\\TrustEdgeID\\netsetpkcs11_x64.dll")).exists()) {
                      moduleName = programFiles + "\\TrustEdgeID\\netsetpkcs11_x64.dll";
@@ -239,65 +254,16 @@ class SessionContext {
                      moduleName = programFiles + "\\x.dll";
                   }
                }
-            } else if (!this.cardATR.equalsIgnoreCase("3bf81300008131fe454a434f5076323431b7") && !this.cardATR.equalsIgnoreCase("3BFA1300008131FE454A434F5032315632333191")) {
-               if (!this.cardATR.equalsIgnoreCase("3B7D94000080318065B0831100C883009000") && !this.cardATR.equalsIgnoreCase("3b7d94000080318065b08311c0a983009000") && !this.cardATR.equalsIgnoreCase("3BF81300008131FE454A434F5076323431B7") && !this.cardATR.equalsIgnoreCase("3BE900008131FE454A434F503231563232A1") && !this.cardATR.equalsIgnoreCase("3BEA00008131FE454A33413038305632343180")) {
-                  if (this.cardATR.equalsIgnoreCase("3bfa1800ff8131fe454a434f5032315632333165")) {
-                     this.loginType = "Certificate";
-                     if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("32")) {
-                        moduleName = systemDrive + ":/Windows/System32/aetpkss1.dll";
-                     } else {
-                        moduleName = systemDrive + ":/Windows/System32/aetpkss1.dll";
-                     }
-                  } else if (this.cardATR.equalsIgnoreCase("3b7f96000080318065b084413df6120ffe829000")) {
-                     this.loginType = "Certificate";
-                     if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("64")) {
-                        if ((new File("C:\\ESSQCA\\pkcs11\\IDPrimePKCS1164.dll")).exists()) {
-                           moduleName = "C:\\ESSQCA\\pkcs11\\IDPrimePKCS1164.dll";
-                        } else if (!(new File(programFiles + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS1164.dll")).exists()) {
-                           moduleName = programFiles.substring(0, programFiles.length() - 6) + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS1164.dll";
-                        } else {
-                           moduleName = programFiles + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS1164.dll";
-                        }
-                     } else if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("32")) {
-                        if ((new File("C:\\ESSQCA\\pkcs11\\IDPrimePKCS11.dll")).exists()) {
-                           moduleName = "C:\\ESSQCA\\pkcs11\\IDPrimePKCS11.dll";
-                        } else if (!(new File(programFiles + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS11.dll")).exists()) {
-                           moduleName = programFiles.substring(0, programFiles.length() - 6) + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS11.dll";
-                        } else {
-                           moduleName = programFiles + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS11.dll";
-                        }
-                     }
-                  } else if (!this.cardATR.equalsIgnoreCase("3b7d96000080318065b0831100c883009000") && !this.cardATR.equalsIgnoreCase("3b7d96000080318065b0830201f383009000") && !this.cardATR.equalsIgnoreCase("3B7F96000080318065B0850300EF1202C1829000")) {
-                     this.loginType = "Certificate";
-                     if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("32")) {
-                        moduleName = systemDrive + ":/Windows/System32/aetpkss1.dll";
-                     } else {
-                        moduleName = systemDrive + ":/Windows/System32/aetpkss1.dll";
-                     }
-                  } else {
-                     this.loginType = "Certificate";
-                     if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("64")) {
-                        if (!(new File(programFiles + "\\Personal\\bin64\\personal64.dll")).exists()) {
-                           moduleName = programFiles + " (x86)" + "\\Personal\\bin64\\personal64.dll";
-                        } else {
-                           moduleName = programFiles + "\\Personal\\bin64\\personal64.dll";
-                        }
-                     } else if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("32")) {
-                        if (!(new File(programFiles + "\\Personal\\bin\\personal.dll")).exists()) {
-                           moduleName = programFiles.substring(0, programFiles.length() - 6) + "\\Personal\\bin\\personal.dll";
-                        } else {
-                           moduleName = programFiles + "\\Personal\\bin\\personal.dll";
-                        }
-                     }
-                  }
-               } else {
-                  this.loginType = "Certificate";
-                  String nstsPkg = "\\NetSeT\\nstsignpkcs11.dll";
-                  moduleName = String.format("%s%s", programFiles, nstsPkg);
-                  oldPKS_or_MUP = true;
-               }
-            } else {
-               this.loginType = "Certificate";
+            }
+            else if(os.contains("mac") || os.contains("darwin"))
+            {
+               moduleName = "/usr/local/lib/libnstpkcs11.dylib";
+            }
+         } else if (this.cardATR.equalsIgnoreCase("3bf81300008131fe454a434f5076323431b7") || this.cardATR.equalsIgnoreCase("3BFA1300008131FE454A434F5032315632333191")) {
+            //TrustEdgeID - PKS
+            this.loginType = "Certificate";
+            if (os.contains("win")) {
+               String programFiles = System.getenv("programfiles");
                if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("64")) {
                   if ((new File(programFiles + "\\NetSeT\\TrustEdgeID PKS\\netsetpkcs11_x64.dll")).exists()) {
                      moduleName = programFiles + "\\NetSeT\\TrustEdgeID PKS\\netsetpkcs11_x64.dll";
@@ -322,6 +288,61 @@ class SessionContext {
                   } else {
                      moduleName = programFiles + "\\x.dll";
                   }
+               }
+            }
+         } else if (this.cardATR.equalsIgnoreCase("3b7f96000080318065b084413df6120ffe829000")) {
+            //IDPrime
+            this.loginType = "Certificate";
+            if (os.contains("win")) {
+               String programFiles = System.getenv("programfiles");
+               if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("64")) {
+                  if ((new File("C:\\ESSQCA\\pkcs11\\IDPrimePKCS1164.dll")).exists()) {
+                     moduleName = "C:\\ESSQCA\\pkcs11\\IDPrimePKCS1164.dll";
+                  } else if (!(new File(programFiles + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS1164.dll")).exists()) {
+                     moduleName = programFiles.substring(0, programFiles.length() - 6) + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS1164.dll";
+                  } else {
+                     moduleName = programFiles + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS1164.dll";
+                  }
+               } else if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("32")) {
+                  if ((new File("C:\\ESSQCA\\pkcs11\\IDPrimePKCS11.dll")).exists()) {
+                     moduleName = "C:\\ESSQCA\\pkcs11\\IDPrimePKCS11.dll";
+                  } else if (!(new File(programFiles + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS11.dll")).exists()) {
+                     moduleName = programFiles.substring(0, programFiles.length() - 6) + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS11.dll";
+                  } else {
+                     moduleName = programFiles + "\\Gemalto\\IDGo 800 PKCS#11\\IDPrimePKCS11.dll";
+                  }
+               }
+            }
+         } else if (this.cardATR.equalsIgnoreCase("3b7d96000080318065b0831100c883009000") ||
+                 this.cardATR.equalsIgnoreCase("3b7d96000080318065b0830201f383009000") ||
+                 this.cardATR.equalsIgnoreCase("3B7F96000080318065B0850300EF1202C1829000")) {
+            //Pesronal
+            this.loginType = "Certificate";
+            if (os.contains("win")) {
+               String programFiles = System.getenv("programfiles");
+               if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("64")) {
+                  if (!(new File(programFiles + "\\Personal\\bin64\\personal64.dll")).exists()) {
+                     moduleName = programFiles + " (x86)" + "\\Personal\\bin64\\personal64.dll";
+                  } else {
+                     moduleName = programFiles + "\\Personal\\bin64\\personal64.dll";
+                  }
+               } else if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("32")) {
+                  if (!(new File(programFiles + "\\Personal\\bin\\personal.dll")).exists()) {
+                     moduleName = programFiles.substring(0, programFiles.length() - 6) + "\\Personal\\bin\\personal.dll";
+                  } else {
+                     moduleName = programFiles + "\\Personal\\bin\\personal.dll";
+                  }
+               }
+            }
+         } else {
+            //AET SafeSign
+            //this.cardATR.equalsIgnoreCase("3bfa1800ff8131fe454a434f5032315632333165")
+            this.loginType = "Certificate";
+            if (os.contains("win")) {
+               if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("32")) {
+                  moduleName = systemDrive + ":/Windows/System32/aetpkss1.dll";
+               } else {
+                  moduleName = systemDrive + ":/Windows/System32/aetpkss1.dll";
                }
             }
          }
