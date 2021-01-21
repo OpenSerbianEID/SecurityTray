@@ -100,12 +100,35 @@ class SessionContext {
    LogInResult LogIn(char[] aPinCode, String cardReader, int OdabraniCitacIndex, String url) throws Exception {
       LogInResult result = new LogInResult();
       String crlURLAddress = null;
-      String pkcs11WrapperPath = System.getProperty("user.dir") + "\\lib\\";
-      String pkcs11WrapperName = "pkcs11wrapper_";
-      if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("64")) {
-         pkcs11WrapperName = pkcs11WrapperName + "64.dll";
+
+      String os = System.getProperty("os.name").toLowerCase();
+
+      String pkcs11WrapperName;
+      String pkcs11WrapperPath;
+      if (os.contains("win")) {
+         pkcs11WrapperPath = System.getProperty("user.dir") + "\\lib\\";
+         pkcs11WrapperName = "pkcs11wrapper_";
+         if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("64")) {
+            pkcs11WrapperName = pkcs11WrapperName + "64.dll";
+         } else {
+            pkcs11WrapperName = pkcs11WrapperName + "32.dll";
+         }
+      } else if (os.contains("mac") || os.contains("darwin")) {
+         pkcs11WrapperPath = System.getProperty("user.dir") + "/lib/";
+         pkcs11WrapperName = "libpkcs11wrapper.jnilib";
+      } else if (os.contains("nux")) {
+         pkcs11WrapperPath = System.getProperty("user.dir") + "/lib/";
+         pkcs11WrapperName = "libpkcs11wrapper_";
+         if (System.getProperty("sun.arch.data.model").equalsIgnoreCase("64")) {
+            pkcs11WrapperName = pkcs11WrapperName + "64.so";
+         } else {
+            pkcs11WrapperName = pkcs11WrapperName + "32.so";
+         }
       } else {
-         pkcs11WrapperName = pkcs11WrapperName + "32.dll";
+         result.setIsLogged(false);
+         _log.error("Operativni sistem nije poržan!");
+         result.setError("Operativni sistem nije poržan!");
+         return result;
       }
 
       url = url + "/" + pkcs11WrapperName;
@@ -117,7 +140,6 @@ class SessionContext {
 
       isIDCard = false;
       isCD = false;
-      String os = System.getProperty("os.name").toLowerCase();
       String programFiles = System.getenv("programfiles");
       Boolean isCard = true;
       this._odabraniCitacIndex = OdabraniCitacIndex;
