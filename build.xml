@@ -1,0 +1,45 @@
+<project name="SecurityTray">
+
+    <taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" />
+
+    <target name="jar" description="Create one big jarfile.">
+        <delete dir="out/ant"/>
+        <jar jarfile="out/ant/deps.jar">
+            <zipgroupfileset dir="lib">
+                <include name="**/*.jar" />
+            </zipgroupfileset>
+        </jar>
+        <sleep seconds="1" />
+        <jar jarfile="out/ant/SecurityTray.jar" basedir="out/production/SecurityTray">
+            <zipfileset src="out/ant/deps.jar" excludes="META-INF/*.SF" />
+            <manifest>
+                <attribute name="Main-Class" value="saga.tray.SecurityTray" />
+            </manifest>
+        </jar>
+        <delete file="out/ant/deps.jar"/>
+        <copy todir="out/ant/lib">
+            <fileset dir="lib">
+                <exclude name="*.jar"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="bundle" description="Create App Bundle">
+        <jarbundler dir="out"
+                    name="SecurityTray"
+                    mainclass="saga.tray.SecurityTray"
+                    jar="out/ant/SecurityTray.jar"
+                    jvmversion="1.8"
+                    bundleid="saga.tray.SecurityTray"
+                    stubfile="resources/universalJavaApplicationStub"
+                    icon="resources/icon.icns"
+                    useJavaXKey="true"
+                    workingdirectory="$JAVAROOT"
+                    vmoptions="-Dsun.security.smartcardio.library=/usr/local/lib/libnstpkcs11.dylib"
+                    >
+            <javafileset dir="out/ant/">
+                <include name="**/lib/*" />
+            </javafileset>
+        </jarbundler>
+    </target>
+</project>
