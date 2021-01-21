@@ -222,6 +222,10 @@ class SessionContext {
                String nstsPkg = "\\NetSeT\\nstsignpkcs11.dll";
                moduleName = String.format("%s%s", programFiles, nstsPkg);
             }
+            else if(os.contains("mac") || os.contains("darwin"))
+            {
+               moduleName = "/usr/local/lib/libnstpkcs11.dylib";
+            }
          } else if (this.cardATR.equalsIgnoreCase("3bff9400008131804380318065b0850201f3120fff82900079")) {
             //TrustEdgeID - Nova Licna Karta
             crlURLAddress = "http://ca.mup.gov.rs/MUPCAGradjani.crl";
@@ -289,6 +293,10 @@ class SessionContext {
                      moduleName = programFiles + "\\x.dll";
                   }
                }
+            }
+            else if(os.contains("mac") || os.contains("darwin"))
+            {
+               moduleName = "/usr/local/lib/libnstpkcs11.dylib";
             }
          } else if (this.cardATR.equalsIgnoreCase("3b7f96000080318065b084413df6120ffe829000")) {
             //IDPrime
