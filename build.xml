@@ -36,6 +36,8 @@
                     useJavaXKey="true"
                     workingdirectory="$JAVAROOT"
                     vmoptions="-Dsun.security.smartcardio.library=/usr/local/lib/libnstpkcs11.dylib"
+                    version="1.1.10"
+                    build="1"
                     >
             <javafileset dir="out/ant/">
                 <include name="**/lib/*" />
