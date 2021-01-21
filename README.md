@@ -1,2 +1,2 @@
 # SecurityTray
-CROSO Security Tray Application
+CROSO Security Tray Application patched for MacOS
