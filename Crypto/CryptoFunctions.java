@@ -134,7 +134,7 @@ class CryptoFunctions {
                   session.signInit(Mechanism.get(1L), signatureKey);
                   byte[] cardSign1 = session.sign(hash);
                   NodeList nl = doc.getElementsByTagName("SignatureValue");
-                  Element signatureValueElement = (Element)nl.item(nl.getLength() - 1);
+                  signatureValueElement = (Element)nl.item(nl.getLength() - 1);
                   signatureValueElement.setTextContent(Base64Utils.base64Encode(cardSign1));
                } catch (Throwable var34) {
                   _log.error(var34.getMessage());

@@ -556,7 +556,7 @@ class SessionContext {
 
       int start;
       try {
-         int start = principal.indexOf("CN=");
+         start = principal.indexOf("CN=");
          if (start >= 0) {
             start = principal.indexOf(",", principal.indexOf("CN="));
             if (start < 0) {
